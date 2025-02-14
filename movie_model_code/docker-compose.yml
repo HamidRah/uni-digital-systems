@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  movie_app:
+    build: .
+    environment:
+      - FLASK_ENV=development
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+      - ./app/static:/app/static
+    depends_on:
+      - db
+    command: ["/wait-for-it.sh", "db:3306", "--", "python", "-m", "app.app"]
+
+  db:
+    image: mysql:8.3
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+  
+  # torchserve_service:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.torchserve
+  #   ports:
+  #     - "8080:8080"
+  #     - "8081:8081"
+  #     - "8082:8082"
+  #   volumes:
+  #     - ./model_store:/home/model-server/model-store
+  #     - ./config.properties:/home/model-server/config.properties
+  #   command:
+  #     - "torchserve"
+  #     - "--start"
+  #     - "--ts-config"
+  #     - "/home/model-server/config.properties"
+  #     - "--model-store"
+  #     - "/home/model-server/model-store"
+  #     - "--models"
+  #     - "movie_recommender.mar"
+
+
+volumes:
+  mysql_data:

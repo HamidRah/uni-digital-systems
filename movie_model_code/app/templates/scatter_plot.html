@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+{% block title %}User Ratings vs Predicted Ratings{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-center text-2xl font-bold mb-4">User Ratings vs Predicted Ratings</h1>
+    <div class="scatter-plot flex justify-center">
+        <div class="w-full lg:w-2/3 xl:w-1/2">
+            {{ plot_div | safe }}
+        </div>
+    </div>
+</div>
+{% endblock %}

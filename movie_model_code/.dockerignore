@@ -1,0 +1,16 @@
+node_modules/
+.venv/
+__pycache__/
+app/__pycache__
+.git
+.gitignore
+.DS_Store
+data/.DS_Store
+
+
+lightning_logs/
+subset_data_0.1/
+checkpoints/
+data/
+bayesians/
+subset_data/

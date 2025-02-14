@@ -1,0 +1,33 @@
+node_modules/
+.npm/
+
+lightning_logs/
+checkpoints/
+subset_data/
+subset_data_0.1/
+bayesians/
+
+# Environment files
+# .env
+.venv/
+
+# Build output
+
+data/
+
+# Bytecode cache files
+__pycache__/
+*.py[cod]
+
+# If using Python >= 3.8, you can also ignore py cache directories with a specific pattern
+*.py[cod]  # For Python bytecode files
+__pycache__/  # For Python bytecode directories
+*.pyc  # For compiled Python files
+
+.vscode/
+
+# Other common ignores
+.DS_Store
+*.log
+
+dsp-movie-recommendations.code-workspace

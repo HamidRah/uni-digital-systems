@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Layout{% endblock %}</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+</head>
+
+{% block header %}
+<body class="bg-gray-900 text-white">
+    <header class="bg-blue-800 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('main.index') }}" class="text-xl font-semibold">Movie Manager</a>
+
+            <div>
+                {% if current_user.is_authenticated %}
+                    <span class="inline-block text-white font-bold py-2 px-4 rounded">Hello, {{ current_user.email }}</span>
+                    <a href="{{ url_for('main.recommend') }}" class="ml-4 inline-block bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out shadow-lg hover:shadow">Recommend</a>
+                    <a href="{{ url_for('main.dashboard') }}" class="inline-block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out shadow-lg hover:shadow">Dashboard</a>
+                    <a href="{{ url_for('main.logout') }}" class="ml-4 inline-block bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out shadow-lg hover:shadow">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('main.login') }}" class="inline-block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out shadow-lg hover:shadow">Login</a>
+                    <a href="{{ url_for('main.register') }}" class="ml-4 inline-block bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out shadow-lg hover:shadow">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+</body>
+{% endblock %}
+<body>
+    <div class="container mx-auto px-4 py-4">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="{{ 'bg-green-600' if category == 'success' else 'bg-red-600' if category == 'error' else 'bg-yellow-500' }} text-white font-semibold px-4 py-3 rounded relative shadow" role="alert">
+                <span class="block sm:inline">{{ message }}</span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                  <svg class="fill-current h-6 w-6 text-white" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697L8.303 10 5.651 7.348a1.2 1.2 0 1 1 1.697-1.697L10 8.181l2.651-3.029a1.2 1.2 0 1 1 1.697 1.697L11.697 10l2.651 3.348a1.2 1.2 0 0 1 0 1.701z"/></svg>
+                </span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+    
+
+</body>
+  {% block content %}
+  {% endblock %}
+
+  {% block scripts %}
+  {% endblock %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+</body>
+
+</html>

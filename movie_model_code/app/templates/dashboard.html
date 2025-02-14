@@ -1,0 +1,118 @@
+{% extends "index.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <button onclick="location.href='{{ url_for('main.user_vs_predicted') }}'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Generate Scatter Plot
+    </button>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-400 dark:text-gray-300">
+        <thead class="text-xs text-gray-200 uppercase bg-blue-800">
+            <tr>
+                <th scope="col" class="px-6 py-3 bg-blue-900">Movie</th>
+                <th scope="col" class="px-6 py-3 bg-blue-800">Rating
+                    <button id="sortToggle" class="bg-gray-700 text-white px-2 py-1 rounded">
+                        Sort
+                    </button>
+                </th>
+                <th scope="col" class="px-6 py-3 bg-blue-900">Release Date</th>
+                <th scope="col" class="px-6 py-3 bg-blue-800">Genres</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in rated_movies %}
+            <tr class="movie bg-gray-800 hover:bg-gray-700 rounded-lg overflow-hidden shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" data-movie-id="{{ movie['movieId'] }}">
+                <th scope="row" class="px-6 py-4 font-medium text-white bg-gray-600">
+                    {{ movie.title }}
+                </th>
+                    <td class="px-6 py-4 text-white">
+                        <div class="rating">
+                            <select class="rating-select bg-gray-700 text-white rounded px-2 py-1">
+                                <option value="0" {% if movie['user_rating'] == None %}selected{% endif %}>Not Rated</option>
+                                <option value="0.5" {% if movie['user_rating'] == 0.5 %}selected{% endif %}>0.5</option>
+                                <option value="1" {% if movie['user_rating'] == 1 %}selected{% endif %}>1</option>
+                                <option value="1.5" {% if movie['user_rating'] == 1.5 %}selected{% endif %}>1.5</option>
+                                <option value="2" {% if movie['user_rating'] == 2 %}selected{% endif %}>2</option>
+                                <option value="2.5" {% if movie['user_rating'] == 2.5 %}selected{% endif %}>2.5</option>
+                                <option value="3" {% if movie['user_rating'] == 3 %}selected{% endif %}>3</option>
+                                <option value="3.5" {% if movie['user_rating'] == 3.5 %}selected{% endif %}>3.5</option>
+                                <option value="4" {% if movie['user_rating'] == 4 %}selected{% endif %}>4</option>
+                                <option value="4.5" {% if movie['user_rating'] == 4.5 %}selected{% endif %}>4.5</option>
+                                <option value="5" {% if movie['user_rating'] == 5 %}selected{% endif %}>5</option>
+                            </select>
+                        </div>
+                    </td>
+                    <th class="px-6 py-4 text-white bg-gray-800">
+                        {{ movie.release_date }}
+                    </th>
+                    <th class="px-6 py-4 bg-gray-600 text-white">
+                        {{ movie.genres }}
+                    </th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.rating-select').forEach(function(select) {
+        select.addEventListener('change', function() {
+            updateRatingColor(this);
+            var movieId = this.closest('tr').dataset.movieId;
+            var rating = parseFloat(this.value);
+            console.log('Movie ID:', movieId, 'Rating:', rating);
+            fetch('/rate_movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({movieId: movieId, rating: rating})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Rating updated successfully');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating rating:', error);
+            });
+        });
+
+        updateRatingColor(select); // Initial color update
+    });
+
+    function updateRatingColor(selectElement) {
+        var ratingValue = parseFloat(selectElement.value);
+        var parentCell = selectElement.closest('td');
+        selectElement.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500');
+        parentCell.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500', 'bg-blue-900');
+        if (ratingValue >= 4) {
+            selectElement.classList.add('bg-green-500');
+            parentCell.classList.add('bg-green-500');
+        } else if (ratingValue >= 3 && ratingValue < 4) {
+            selectElement.classList.add('bg-yellow-500');
+            parentCell.classList.add('bg-yellow-500');
+        } else if (ratingValue > 0) {
+            selectElement.classList.add('bg-red-500');
+            parentCell.classList.add('bg-red-500');
+        } else {
+            parentCell.classList.add('bg-blue-900');
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const sortButton = document.getElementById('sortToggle');
+    sortButton.addEventListener('click', function() {
+        const currentSortOrder = new URL(window.location.href).searchParams.get('sort');
+        const newSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        window.location.href = `${window.location.pathname}?sort=${newSortOrder}`;
+    });
+});
+</script>
+{% endblock %}
