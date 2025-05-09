@@ -1,1 +1,4 @@
-Movie Reviews Predictor
+## Project Screenshots
+
+### Results
+![Homepage](images/results.png)
