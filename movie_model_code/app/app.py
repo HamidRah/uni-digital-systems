@@ -4,7 +4,7 @@ from app.extensions import db, login_manager
 from app.routes import bp
 
 import torch
-from .model_architecture_local import MovieRecommender
+# from .model_architecture_local import MovieRecommender
 
 
 def create_app(config_name=None):
